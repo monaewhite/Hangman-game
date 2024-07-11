@@ -9,9 +9,8 @@ This file contains the declaration for string functions that uses the Merriam We
 #include <vector>
 #include <string>
 #include <curl/curl.h>
-#include <nlohmann/json.hpp>
-
 using json = nlohmann::json;
+
 class wordFetcher{
 public:
     std::string fetchWord();

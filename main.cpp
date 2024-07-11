@@ -30,8 +30,8 @@ int main() {
     game.guessLetter('e');
     game.displayStatus();
     
-    // Run the play method to test the full game loop
-    game.play();
+    // game.play();
 
     return 0;
 }
+// g++ -std=c++17 main.cpp playbyplay.cpp picturedisplay.cpp wordfetcher.cpp -lcurl -o hangman

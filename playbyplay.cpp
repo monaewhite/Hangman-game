@@ -10,7 +10,7 @@ int playByPlay::getAttemptsLeft(){
 }
 
 void playByPlay::setAttemptsLeft(){
-	return attempts_left --;
+	attempts_left--;
 }
 
 bool playByPlay::checkValidity(char letter){
