@@ -23,9 +23,13 @@ void playByPlay::guessLetter(char letter){
 	guessed_letters.insert(letter);
 
 	for(int i = 0; i < word.length(); ++i){
-		if(word[i] == letter){
-			hidden_word[i] = letter; // replaces placeholder with the correct character
+		if(word[i] == std::tolower(letter)){
+			hidden_word[i] = std::tolower(letter); // replaces placeholder with the correct character
 			found = true; // the letter made an appearance at least once
+		}
+		else if(word[i] == std::toupper(letter)){
+			hidden_word[i] = std::toupper(letter);
+			found = true;
 		}
 	}
 	if(!found){ // the letter made zero appearances
@@ -50,7 +54,7 @@ void playByPlay::displayStatus(){
 }
 
 bool playByPlay::checkWin(){
-	return std::find(hidden_word.begin(), hidden_word.end(), '*') == hidden_word.end();
+	return std::find(hidden_word.begin(), hidden_word.end(), '*') == hidden_word.end(); //if there are no more *, then the user has successfully guessed all the letters and won the game
 }
 
 bool playByPlay::checkLoss(){
@@ -72,15 +76,15 @@ void playByPlay::play(){
         	guessLetter(guess);			
 		}
 		else{
-			std::cout << "Invalid guess. Ensure your guess consists of only alphabetical characters.";
+			std::cout << "\nInvalid guess. Ensure your guess consists of only alphabetical characters.";
 		}
 	}
 	if(checkWin()){
-            std::cout << "Congratulations! You've guessed the word: " << word << std::endl;
-            std::cout << "Definition: " << definition << std::endl;
-			std::cout << "Did you learn something new?" << std::endl;
+            std::cout << "\nCongratulations! You've guessed the word: " << word << std::endl;
         } 
 	if(checkLoss()){
-        std::cout << "Sorry, you've been hanged! The word was: " << word << std::endl;
+        std::cout << "\nSorry, you've been hanged! The word was: " << word << std::endl;
     }
+	std::cout << "Definition: " << definition << std::endl;
+	std::cout << "Did you learn something new?" << std::endl;
 }

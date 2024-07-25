@@ -4,6 +4,19 @@ This file contains the implementation for string functions that uses the Merriam
 */
 
 #include "wordfetcher.hpp"
+#include "json.hpp"
+
+using json = nlohmann::json;
+
+/**
+    @param: n/a
+    @post: loads words when class object is initialized
+    @return: n/a
+*/
+wordFetcher::wordFetcher(){
+    loadWords(); 
+    std::srand(std::time(0));
+}
 
 /**
     @param: pointer to the data received by the API call, sizes of each data chunk received, pointer to the string where the data will be stored
@@ -12,7 +25,7 @@ This file contains the implementation for string functions that uses the Merriam
 */
 size_t wordFetcher::writeCallBack(void *contents, size_t size, size_t nmemb, void *userp){
     ((std::string*)userp) -> append((char *)contents, size * nmemb); 
-    return size * nmemb; //returns the total data of the size processed
+    return size * nmemb; // returns the total data of the size processed
 }
 
 /**
@@ -45,24 +58,37 @@ std::string wordFetcher::makeAPICall(const std::string &url){
 
 /**
     @param: n/a
-    @post: parses the name of the word in the json file 
+    @post: loads words from words.txt into the vector wordList
+    @return: n/a
+*/
+void wordFetcher::loadWords(){
+    std::ifstream file("words.txt");
+    if(!file.is_open()){
+        std::cerr << "Error: Could not open words file" << std::endl;
+        return;
+    }
+
+    std::string word;
+    while(std::getline(file, word)){
+        wordList.push_back(word);
+    }
+
+    file.close();
+}
+
+/**
+    @param: n/a
+    @post: fetches a word from the vector wordList
     @return: the word
 */
 std::string wordFetcher::fetchWord(){
-    std::string url = "https://www.dictionaryapi.com/api/v3/references/collegiate/json/random?key=your_api_key_here";
-    std::string response = makeAPICall(url);
-
-    if(response.empty()){
-        std::cerr << "Error: Failed to fetch word from API" << std::endl;
+    if(wordList.empty()){
+        std::cerr << "Error: Word list is empty." << std::endl;
         return "";
     }
 
-    json jsonResponse = json::parse(response);
-    if(!jsonResponse.is_array() || jsonResponse.empty() || !jsonResponse[0].is_object()){
-        std::cerr << "Error: Invalid JSON response format" << std::endl;
-        return "";
-    }
-    std::string word = jsonResponse[0]["meta"]["id"];
+    int index = std::rand() % wordList.size();
+    std::string word = wordList[index];
 
     return word;
 }
@@ -73,20 +99,35 @@ std::string wordFetcher::fetchWord(){
     @return: the definition
 */
 std::string wordFetcher::fetchDefinition(const std::string &word){
-    std::string url = "https://www.dictionaryapi.com/api/v3/references/collegiate/json/" + word + "?key=your_api_key_here";
+    std::string url = "https://www.dictionaryapi.com/api/v3/references/collegiate/json/" + word + "?key=243002c1-6010-412a-9ec4-8a0dedba2ec8";
     std::string response = makeAPICall(url);
 
-    if (response.empty()) {
-        std::cerr << "Error: Failed to fetch definition from API" << std::endl;
+    if(response.empty()){
+        std::cerr << "Error: Failed to fetch definition from API." << std::endl;
         return "";
     }
 
     json jsonResponse = json::parse(response);
-    if (!jsonResponse.is_array() || jsonResponse.empty() || !jsonResponse[0].is_object()) {
-        std::cerr << "Error: Invalid JSON response format" << std::endl;
-        return "";
+
+    std::string definition;
+    
+    try{
+        if(jsonResponse[0].contains("shortdef") && jsonResponse[0]["shortdef"].is_array()){
+            definition = jsonResponse[0]["shortdef"][0];
+            definition[0] = std::toupper(definition[0]); // capitalize the first character since the definitions are automatically lowercase 
+            
+            // size_t colonPosition = definition.find(':');
+            // if(colonPosition != std::string::npos){ 
+            //     definition = definition.substr(0, colonPosition); // makes the definitions more concise 
+            // }
+        } 
+        else{
+            std::cerr << "Error: Definition not found in the response." << std::endl;
+        }
+    } 
+    catch(const std::exception &e){
+        std::cerr << "Error parsing definition: " << e.what() << std::endl;
     }
-    std::string definition = jsonResponse[0]["shortdef"][0];
 
     return definition;
 }

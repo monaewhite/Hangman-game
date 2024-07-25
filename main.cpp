@@ -1,36 +1,22 @@
+#include <iostream>
 #include "playbyplay.hpp"
 
-int main() {
+int main(){
+
+    // wordFetcher wf;
+    // std::string word = wf.fetchWord();
+
+    // if(!word.empty()){
+    //     std::cout << "Fetched word: " << word << std::endl;
+    //     std::string definition = wf.fetchDefinition(word);
+    //     std::cout << "Definition: " << definition << std::endl;
+    // } 
+    // else{
+    //     std::cout << "Failed to fetch word." << std::endl;
+    // }
+
     playByPlay game;
-    
-    game.displayStatus(); // Initial display of game status
-    
-    // Test guessing letters
-    game.guessLetter('e');
-    game.displayStatus();
-    
-    game.guessLetter('x');
-    game.displayStatus();
-    
-    game.guessLetter('a');
-    game.displayStatus();
-    
-    game.guessLetter('z'); // Incorrect guess
-    game.displayStatus();
-    
-    game.guessLetter('m');
-    game.displayStatus();
-    
-    game.guessLetter('p');
-    game.displayStatus();
-    
-    game.guessLetter('l');
-    game.displayStatus();
-    
-    game.guessLetter('e');
-    game.displayStatus();
-    
-    // game.play();
+    game.play();
 
     return 0;
 }

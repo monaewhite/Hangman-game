@@ -1,0 +1,10 @@
+# Ignore build files
+*.o
+*.out
+*.exe
+hangman
+
+# Ignore IDE/editor specific files
+.vscode/
+.idea/
+*.swp
